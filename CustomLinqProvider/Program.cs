@@ -13,7 +13,11 @@ namespace CustomLinqProvider
             using (var connection = new SqlConnection(@"Server=.;Database=AdventureWorks;Integrated Security=True"))
             using (var context = new DataContext(connection))
             {
-                var result = context.GetTable<Contact>().Select(a => a).ToArray();//.FirstOrDefault();
+                //var result = context.GetTable<Contact>().Select(a => a).ToArray();
+                //var result = context.GetTable<Contact>().Select(a => a).First();
+                //var result = context.GetTable<Contact>().Select(a => a).FirstOrDefault();
+                var result = context.GetTable<Contact>().Select(a => a).Single();
+                //var result = context.GetTable<Contact>().Select(a => a).SingleOrDefault();
             }
         }
     }

@@ -14,7 +14,8 @@ namespace CustomLinqProvider
         private bool mIsInnerCall;
         private readonly StringBuilder mText = new StringBuilder();
         private readonly List<SqlParameter> mParameters = new List<SqlParameter>();
-        private QueryOutputType mOutputType;
+        private bool mIsSequence;
+        private LimitingDataReaderMode mLimitingDataReaderMode;
         private Type mElementType;
         private readonly List<PropertyInfo> mProperties = new List<PropertyInfo>();
 
@@ -24,17 +25,19 @@ namespace CustomLinqProvider
 
         public object GenerateTranslator(SqlDataReader reader)
         {
-            if (mOutputType == QueryOutputType.Sequence)
+            var limitedReader = new LimitingDataReader(reader, mLimitingDataReaderMode);
+            var converter = Activator.CreateInstance(typeof(SqlReaderConverter<>).MakeGenericType(mElementType), limitedReader, mProperties);
+            return mIsSequence ? converter : GetLast((IEnumerable)converter);
+        }
+
+        public object GetLast(IEnumerable enumerable)
+        {
+            object lastItem = null;
+            foreach (var item in enumerable)
             {
-                return Activator.CreateInstance(typeof(SqlReaderConverter<>).MakeGenericType(mElementType), reader, mProperties, SqlReaderConverterFlags.None);
+                lastItem = item;
             }
-            
-            var converter = (IEnumerable)Activator.CreateInstance(typeof(SqlReaderConverter<>).MakeGenericType(mElementType), reader, mProperties, SqlReaderConverterFlags.None);
-            var enumerator = converter.GetEnumerator();
-            var hasItem = enumerator.MoveNext();
-            if (mOutputType == QueryOutputType.Single && !hasItem)
-                throw new InvalidOperationException("Sequence contains no elements.");
-            return enumerator.Current;
+            return lastItem;
         }
 
         public override Expression Visit(Expression node)
@@ -45,7 +48,8 @@ namespace CustomLinqProvider
                 mIsInnerCall = true;
                 mText.Length = 0;
                 mParameters.Clear();
-                mOutputType = QueryOutputType.Sequence;
+                mIsSequence = true;
+                mLimitingDataReaderMode = LimitingDataReaderMode.None;
                 mElementType = null;
                 mProperties.Clear();
             }
@@ -67,7 +71,8 @@ namespace CustomLinqProvider
         {
             if (IsQueryable(node))
             {
-                mOutputType = QueryOutputType.Sequence;
+                mLimitingDataReaderMode = LimitingDataReaderMode.None;
+                mIsSequence = true;
                 mElementType = TypeSystem.GetElementType(node.Type);
 
                 var schema = @"dbo";
@@ -124,14 +129,25 @@ namespace CustomLinqProvider
                 var resultingNode = base.VisitMethodCall(node);
                 mText.Append(@") AS temp");
 
-                mOutputType = node.Method.Name == "First" ? QueryOutputType.Single : QueryOutputType.OptionalSingle;
+                mIsSequence = false;
+                mLimitingDataReaderMode = node.Method.Name == "First" ? LimitingDataReaderMode.AtLeastOneRow : LimitingDataReaderMode.None;
                 mElementType = TypeSystem.GetElementType(node.Type);
                 return resultingNode;
             }
-            else
+
+            if (node.Method.Name == "Single" || node.Method.Name == "SingleOrDefault")
             {
-                return base.VisitMethodCall(node);
+                mText.Append(@"SELECT TOP 2 * FROM (");
+                var resultingNode = base.VisitMethodCall(node);
+                mText.Append(@") AS temp");
+
+                mIsSequence = false;
+                mLimitingDataReaderMode = (node.Method.Name == "Single" ? LimitingDataReaderMode.AtLeastOneRow : LimitingDataReaderMode.None) | LimitingDataReaderMode.AtMostOneRow;
+                mElementType = TypeSystem.GetElementType(node.Type);
+                return resultingNode;
             }
+
+            return base.VisitMethodCall(node);
         }
 
         private static bool IsQueryable(ConstantExpression node)

@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace CustomLinqProvider
 {
     [Flags]
-    public enum SqlReaderConverterFlags
+    public enum LimitingDataReaderMode
     {
         None = 0,
         AtLeastOneRow = 1,

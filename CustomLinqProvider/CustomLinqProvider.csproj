@@ -47,11 +47,12 @@
     <Compile Include="ColumnAttribute.cs" />
     <Compile Include="CustomProvider.cs" />
     <Compile Include="DataContext.cs" />
+    <Compile Include="LimitingDataReader.cs" />
+    <Compile Include="LimitingDataReaderMode.cs" />
     <Compile Include="QueryOutputType.cs" />
     <Compile Include="QueryTranslator.cs" />
     <Compile Include="SqlConvert.cs" />
     <Compile Include="SqlReaderConverter.cs" />
-    <Compile Include="SqlReaderConverterFlags.cs" />
     <Compile Include="Table.cs" />
     <Compile Include="Contact.cs" />
     <Compile Include="Program.cs" />
