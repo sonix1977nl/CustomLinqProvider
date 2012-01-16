@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,11 +22,20 @@ namespace CustomLinqProvider
 
         public IEnumerable<SqlParameter> Parameters { get { return mParameters; } }
 
-        public QueryOutputType OutputType { get { return mOutputType; } }
-
-        public Type ElementType { get { return mElementType; } }
-
-        public IEnumerable<PropertyInfo> Properties { get { return mProperties; } }
+        public object GenerateTranslator(SqlDataReader reader)
+        {
+            if (mOutputType == QueryOutputType.Sequence)
+            {
+                return Activator.CreateInstance(typeof(SqlReaderConverter<>).MakeGenericType(mElementType), reader, mProperties, SqlReaderConverterFlags.None);
+            }
+            
+            var converter = (IEnumerable)Activator.CreateInstance(typeof(SqlReaderConverter<>).MakeGenericType(mElementType), reader, mProperties, SqlReaderConverterFlags.None);
+            var enumerator = converter.GetEnumerator();
+            var hasItem = enumerator.MoveNext();
+            if (mOutputType == QueryOutputType.Single && !hasItem)
+                throw new InvalidOperationException("Sequence contains no elements.");
+            return enumerator.Current;
+        }
 
         public override Expression Visit(Expression node)
         {

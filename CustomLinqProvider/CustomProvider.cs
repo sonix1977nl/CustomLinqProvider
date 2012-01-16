@@ -57,21 +57,7 @@ namespace CustomLinqProvider
                 var reader = command.ExecuteReader();
                 try
                 {
-                    if (translator.OutputType == QueryOutputType.Sequence)
-                    {
-                        return Activator.CreateInstance(typeof(SqlReaderConverter<>).MakeGenericType(translator.ElementType), reader, translator.Properties);
-                    }
-                    else if (translator.OutputType == QueryOutputType.Single || translator.OutputType == QueryOutputType.OptionalSingle)
-                    {
-                        var converter = (IEnumerable)Activator.CreateInstance(typeof(SqlReaderConverter<>).MakeGenericType(translator.ElementType), reader, translator.Properties);
-                        var enumerator = converter.GetEnumerator();
-                        var hasItem = enumerator.MoveNext();
-                        if (translator.OutputType == QueryOutputType.Single && !hasItem)
-                            throw new InvalidOperationException("Sequence contains no elements.");
-                        return enumerator.Current;
-                    }
-
-                    throw new InvalidOperationException();
+                    return translator.GenerateTranslator(reader);
                 }
                 catch
                 {
