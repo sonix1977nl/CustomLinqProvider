@@ -44,9 +44,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CollectionExtensions.cs" />
     <Compile Include="ColumnAttribute.cs" />
     <Compile Include="CustomProvider.cs" />
     <Compile Include="DataContext.cs" />
+    <Compile Include="RuntimeEvaluationNominator.cs" />
+    <Compile Include="RuntimeEvaluator.cs" />
     <Compile Include="LimitingDataReader.cs" />
     <Compile Include="LimitingDataReaderMode.cs" />
     <Compile Include="QueryOutputType.cs" />

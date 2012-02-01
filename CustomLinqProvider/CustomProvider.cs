@@ -39,6 +39,8 @@ namespace CustomLinqProvider
 
         public object Execute(Expression expression)
         {
+            expression = SimplifyExpression(expression);
+
             var translator = new QueryTranslator();
             translator.Visit(expression);
 
@@ -65,6 +67,19 @@ namespace CustomLinqProvider
                     throw;
                 }
             }
+        }
+
+        private Expression SimplifyExpression(Expression expression)
+        {
+            expression = EvaluateAppropriateSubExpressionsAtRuntime(expression);
+            return expression;
+        }
+
+        private static Expression EvaluateAppropriateSubExpressionsAtRuntime(Expression expression)
+        {
+            var nominees = RuntimeEvaluationNominator.Nominate(expression);
+            expression = RuntimeEvaluator.Evaluate(expression, nominees);
+            return expression;
         }
     }
 }
