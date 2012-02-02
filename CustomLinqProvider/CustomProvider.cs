@@ -71,11 +71,11 @@ namespace CustomLinqProvider
 
         private Expression SimplifyExpression(Expression expression)
         {
-            expression = EvaluateAppropriateSubExpressionsAtRuntime(expression);
+            expression = EvaluateAtRuntime(expression);
             return expression;
         }
 
-        private static Expression EvaluateAppropriateSubExpressionsAtRuntime(Expression expression)
+        private static Expression EvaluateAtRuntime(Expression expression)
         {
             var nominees = RuntimeEvaluationNominator.Nominate(expression);
             expression = RuntimeEvaluator.Evaluate(expression, nominees);
