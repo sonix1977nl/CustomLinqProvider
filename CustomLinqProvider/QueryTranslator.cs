@@ -69,7 +69,7 @@ namespace CustomLinqProvider
 
         protected override Expression VisitConstant(ConstantExpression node)
         {
-            if (IsQueryable(node))
+            if (node.IsQueryable())
             {
                 mLimitingDataReaderMode = LimitingDataReaderMode.None;
                 mIsSequence = true;
@@ -148,11 +148,6 @@ namespace CustomLinqProvider
             }
 
             return base.VisitMethodCall(node);
-        }
-
-        private static bool IsQueryable(ConstantExpression node)
-        {
-            return node.Type.GetInterfaces().Any(a => a.IsGenericType && a.GetGenericTypeDefinition() == typeof(IQueryable<>));
         }
 
         private static string EncodeSqlName(string name)

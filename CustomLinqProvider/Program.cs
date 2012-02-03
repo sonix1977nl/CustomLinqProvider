@@ -14,13 +14,13 @@ namespace CustomLinqProvider
             using (var context = new DataContext(connection))
             {
                 //var result = context.GetTable<Contact>().Select(a => a).ToArray();
-                //var result = context.GetTable<Contact>().Select(a => a).First();
+                var result = context.GetTable<Contact>().Select(a => a).First();
                 //var result = context.GetTable<Contact>().Select(a => a).FirstOrDefault();
                 //var result = context.GetTable<Contact>().Select(a => a).Single();
                 //var result = context.GetTable<Contact>().Select(a => a).SingleOrDefault();
 
-                var lastName = "Do";
-                var result = context.GetTable<Contact>().Where(a => a.LastName.StartsWith(lastName)).ToArray();
+                //var lastName = "Do";
+                //var result = context.GetTable<Contact>().Where(a => a.LastName.StartsWith(lastName)).ToArray();
             }
         }
     }
