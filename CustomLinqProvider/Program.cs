@@ -14,7 +14,7 @@ namespace CustomLinqProvider
             using (var context = new DataContext(connection))
             {
                 //var result = context.GetTable<Contact>().Select(a => a).ToArray();
-                var result = context.GetTable<Contact>().Select(a => a).First();
+                var result = context.GetTable<Contact>().Where(a => !(a.Id >= 10)).ToArray();
                 //var result = context.GetTable<Contact>().Select(a => a).FirstOrDefault();
                 //var result = context.GetTable<Contact>().Select(a => a).Single();
                 //var result = context.GetTable<Contact>().Select(a => a).SingleOrDefault();

@@ -56,6 +56,7 @@
     <Compile Include="QueryOutputType.cs" />
     <Compile Include="QueryTranslator.cs" />
     <Compile Include="SqlConvert.cs" />
+    <Compile Include="SqlHelper.cs" />
     <Compile Include="SqlReaderConverter.cs" />
     <Compile Include="Table.cs" />
     <Compile Include="Contact.cs" />

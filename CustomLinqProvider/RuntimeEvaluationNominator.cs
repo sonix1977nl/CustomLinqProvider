@@ -62,13 +62,9 @@ namespace CustomLinqProvider
 
         protected override Expression VisitConstant(ConstantExpression node)
         {
-
             if (node.IsQueryable())
-
                 mCannotBeEvaluated = true;
-
             return base.VisitConstant(node);
-
         }
         
         protected override Expression VisitLambda<T>(Expression<T> node)
