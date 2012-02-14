@@ -9,7 +9,7 @@ using System.Reflection;
 
 namespace CustomLinqProvider
 {
-    public class QueryTranslator : ExpressionVisitor
+    public class QueryTranslator : ExtendedExpressionVisitor
     {
         // TODO: Suport string operations like StartsWith, etc.
 
@@ -42,31 +42,15 @@ namespace CustomLinqProvider
             return lastItem;
         }
 
-        public override Expression Visit(Expression node)
+        protected override void OnBeginVisitExpression(Expression node)
         {
-            var isOuterCall = !mIsInnerCall;
-            if (isOuterCall)
-            {
-                mIsInnerCall = true;
-                mText.Length = 0;
-                mParameters.Clear();
-                mIsSequence = true;
-                mLimitingDataReaderMode = LimitingDataReaderMode.None;
-                mElementType = null;
-                mProperties.Clear();
-            }
-
-            try
-            {
-                return base.Visit(node);
-            }
-            finally
-            {
-                if (isOuterCall)
-                {
-                    mIsInnerCall = false;
-                }
-            }
+            mIsInnerCall = true;
+            mText.Length = 0;
+            mParameters.Clear();
+            mIsSequence = true;
+            mLimitingDataReaderMode = LimitingDataReaderMode.None;
+            mElementType = null;
+            mProperties.Clear();
         }
 
         protected override Expression VisitConstant(ConstantExpression node)

@@ -6,7 +6,7 @@ namespace CustomLinqProvider
     /// <summary>
     /// Searches for (sub-)expressions in an expression that can be evaluated at run-time (for example, references to local variables).
     /// </summary>
-    internal class RuntimeEvaluationNominator : ExpressionVisitor
+    internal class RuntimeEvaluationNominator : ExtendedExpressionVisitor
     {
         private readonly HashSet<Expression> mNominees = new HashSet<Expression>();
         private readonly HashSet<Expression> mSubTreeNominees = new HashSet<Expression>();

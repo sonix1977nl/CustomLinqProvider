@@ -49,6 +49,7 @@
     <Compile Include="CustomProvider.cs" />
     <Compile Include="DataContext.cs" />
     <Compile Include="ExpressionExtensions.cs" />
+    <Compile Include="ExtendedExpressionVisitor.cs" />
     <Compile Include="RuntimeEvaluationNominator.cs" />
     <Compile Include="RuntimeEvaluator.cs" />
     <Compile Include="LimitingDataReader.cs" />

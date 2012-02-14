@@ -6,7 +6,7 @@ namespace CustomLinqProvider
     /// <summary>
     /// Evaluates given sub-expressions at runtime and replaces them in the full expression with the evaluated result.
     /// </summary>
-    internal class RuntimeEvaluator : ExpressionVisitor
+    internal class RuntimeEvaluator : ExtendedExpressionVisitor
     {
         private readonly HashSet<Expression> mNominees;
 
